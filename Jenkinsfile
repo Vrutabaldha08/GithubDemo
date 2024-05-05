@@ -4,33 +4,31 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
-                // Add your build commands here
-                // For example:
-                // sh 'mvn clean package'
+                echo "Build Stage"
             }
         }
-        
-        stage('Deploy') {
+        stage('Test') {
             steps {
-                echo 'Deploying...'
-                // Add your deployment commands here
-                // For example:
-                // sh 'kubectl apply -f deployment.yaml'
+                echo "Test Stage"
             }
         }
-    }
-
-    post {
-        always {
-            cleanWs(
-                cleanWhenNotBuilt: false,
-                deleteDirs: true,
-                disableDeferredWipeout: true,
-                notFailBuild: true,
-                patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
-                           [pattern: '.propsfile', type: 'EXCLUDE']]
-            )
+        stage('Deploy') {
+            when {
+                expression {
+                    // Check if branch name contains "devops"
+                    return env.BRANCH_NAME =~ /devops/
+                }
+            }
+            steps {
+                script {
+                    // Extract environment name from branch name
+                    def environment = env.BRANCH_NAME =~ /devops-(\w+)/
+                    if (environment) {
+                        echo "Deploying to ${environment[0][1]} environment"
+                        // Add your deployment steps here
+                    }
+                }
+            }
         }
     }
 }
