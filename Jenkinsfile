@@ -21,7 +21,7 @@ pipeline {
 }
 
 def buildAndDeploy(branchType) {
-    stage("Build-${branchType.capitalize()}") {
+    stage("${branchType}/${env.BRANCH_NAME}") {
         steps {
             sh "echo 'Start ${branchType.capitalize()} server deployment'"
             sh "mvn -Dmaven.test.failure.ignore=true clean package"
@@ -29,14 +29,14 @@ def buildAndDeploy(branchType) {
         }
     }
 
-    stage("Deploy-${branchType.capitalize()}") {
+    stage("${branchType}/${env.BRANCH_NAME}/Deploy") {
         steps {
             // Add deployment steps here
             sh "echo 'Deploying ${branchType.capitalize()} server'"
         }
     }
 
-    stage("Login to remote host-${branchType.capitalize()}") {
+    stage("${branchType}/${env.BRANCH_NAME}/Login to remote host") {
         steps {
             // Add login steps here
             sh "echo 'Logging in to remote host for ${branchType.capitalize()} server'"
